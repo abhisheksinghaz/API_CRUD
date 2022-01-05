@@ -22,10 +22,6 @@ my_posts = [{"title":"T1","content":"I am positive content but still marked as F
 @app.get("/posts")
 def get_posts():
     # this is a GET request
-    # my_posts.sort(id)
-    # print(my_posts)
-    # # my_posts.sort()
-    # print(my_posts)
     return my_posts
 
 @app.get("/")
@@ -62,6 +58,20 @@ def delete_post(id: int):
     if not post:
         raise HTTPException(status_code=HTTP_404_NOT_FOUND,
                         detail="No post with id:{} exist in the database".format(id))
-
     my_posts.pop(post[0])
     return Response(status_code=HTTP_204_NO_CONTENT)
+
+@app.put("/posts/{id}")
+def update_post(id: int, updated_post: Post):
+    post = find_post(id)
+    if not post:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND,
+                        detail="No post with id:{} exist in the database".format(id))
+    updated_post_dict = updated_post.dict()
+    # for key,value in updated_post_dict.items():
+    # print(updated_post_dict.values())
+    for key,value in updated_post_dict.items():
+        # print(key,value)
+        (my_posts[post[0]])[key] = value
+    # print((my_posts[post[0]])["title"])
+    return my_posts[post[0]]
